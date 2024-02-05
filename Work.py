@@ -141,10 +141,14 @@ class NextPage(tk.Tk):
 
         random_data_gene = random_population(gene) 
         random_data_gene.insert(0, chromosomes_1) 
+
         fawfa = display_min_fitness_chromosomes(random_data_gene) #เอาตัวchromosomeที่น้อยยสุดใส่ตัวแปร
         bwaba = single_point_crossover(fawfa) #เอาตัวลูกที่สับมาแล้วมาใส่ตัวแปร
+        fmutant = mutant(bwaba)
+
         print(f"x: {fawfa[0],fawfa[1]}")  #แสดงค่าพ่อแม่ในterminal
         print(f"bwaba: {bwaba[0]}, {bwaba[1]}") #แสดงค่าลูกในterminal
+        print(f"fmutant: {fmutant[0]}, {fmutant[1]}")
         print(f"per_gen_age: {per_gen_age}")
         print(f"per_workout: {per_workout}")
         print(f"per_smoking: {per_smoking}")
@@ -162,17 +166,25 @@ class NextPage(tk.Tk):
             f""
             
         )
-        for i, person in enumerate(random_data_gene, start=1): #แสดงผลข้อมูลประชากรทั้งหมด
+        # แสดงผลข้อมูลประชากรทั้งหมด
+    #for i,generation in enumerate(, start=1):     
+        for i, person in enumerate(random_data_gene, start=1):
             result_message += f"\nข้อมูลบุคคลที่ {i}:\n"
             result_message += f"เพศ: {person[0]}\nอายุ: {person[1]}\nเวลาออกกำลังกาย: {person[2]} นาที\nการสูบบุหรี่: {person[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {person[4]}%\n"
-        
-        for i, bestperson in enumerate(fawfa, start=1): #แสดงผลว่าparentที่ถูกเลือกคือตัวไหน
-            result_message += f"\nพ่อ {i}:\n"
-            result_message += f"เพศ: {bestperson [0]}\nอายุ: {bestperson [1]}\nเวลาออกกำลังกาย: {bestperson [2]} นาที\nการสูบบุหรี่: {bestperson [3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson [4]}%\n"    
-        
-        for i, crosschild in enumerate(bwaba, start=1): #แสดงผลลูกที่ผ่านการcross
-            result_message = f"\nผล crossover ลูกคนที่{i}:\n"
-            result_message += f"เพศ: {crosschild [0]}\nอายุ: {crosschild [1]}\nเวลาออกกำลังกาย: {crosschild [2]} นาที\nการสูบบุหรี่: {crosschild [3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {crosschild [4]}%\n"
+
+        # แสดงผลว่า parent ที่ถูกเลือกคือตัวไหน
+        for i, bestperson in enumerate(fawfa, start=1):
+            result_message += f"\nparent {i}:\n"
+            result_message += f"เพศ: {bestperson[0]}\nอายุ: {bestperson[1]}\nเวลาออกกำลังกาย: {bestperson[2]} นาที\nการสูบบุหรี่: {bestperson[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson[4]}%\n"
+
+        # แสดงผลลูกที่ผ่านการ crossover
+        for i, crosschild in enumerate(bwaba, start=1):
+            result_message += f"\nผล crossover ลูกคนที่ {i}:\n"
+            result_message += f"เพศ: {crosschild[0]}\nอายุ: {crosschild[1]}\nเวลาออกกำลังกาย: {crosschild[2]} นาที\nการสูบบุหรี่: {crosschild[3]}\n"
+
+        for i, mutantchild in enumerate(fmutant, start=1):
+            result_message += f"\nผล mutant ลูกคนที่ {i}:\n"
+            result_message += f"เพศ: {mutantchild[0]}\nอายุ: {mutantchild[1]}\nเวลาออกกำลังกาย: {mutantchild[2]} นาที\nการสูบบุหรี่: {mutantchild[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson[4]}%\n"
 
         self.result_text.delete(1.0, tk.END)  # ล้างเนื้อหาก่อนหน้า
         self.result_text.insert(tk.END, result_message)
@@ -272,7 +284,9 @@ def percent_smoking(smoking, per_gen_age, per_workout):
             return int(((per_gen_age + per_workout + 0.05) * 100) * 2)
         elif smoking.lower() == "no":
             return int((per_gen_age + per_workout + 0.05) * 100)
+
 def display_min_fitness_chromosomes(random_data_gene):
+    #เลือกตัวพ่อแม่จากที่น้อยที่สุด
     x = []
     y = []
     # เก็บค่า Fitness ของทุก Chromosomes
@@ -301,6 +315,16 @@ def single_point_crossover(fawfa):
     A_new = np.append(A[:X], B[X:]) 
     B_new = np.append(B[:X], A[X:])    
     return A_new, B_new
+
+def mutant(bwaba):
+    # สร้าง list ใหม่เพื่อสลับค่าตำแหน่ง 1 และ 2
+    fitness_A_new_swapped = list(bwaba[0])
+    fitness_A_new_swapped[1], fitness_A_new_swapped[2] = fitness_A_new_swapped[2], fitness_A_new_swapped[1]
+
+    fitness_B_new_swapped = list(bwaba[1])
+    fitness_B_new_swapped[1], fitness_B_new_swapped[2] = fitness_B_new_swapped[2], fitness_B_new_swapped[1]
+    return fitness_A_new_swapped,fitness_B_new_swapped 
+
 
 
 if __name__ == "__main__":
