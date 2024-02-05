@@ -145,10 +145,15 @@ class NextPage(tk.Tk):
         fawfa = display_min_fitness_chromosomes(random_data_gene) #เอาตัวchromosomeที่น้อยยสุดใส่ตัวแปร
         bwaba = single_point_crossover(fawfa) #เอาตัวลูกที่สับมาแล้วมาใส่ตัวแปร
         fmutant = mutant(bwaba)
+        awaaw = calculate_fitness_after_crossover2(fmutant)
 
+        
+        print(f"asdasd: {awaaw[0]}, {awaaw[1]}")
         print(f"x: {fawfa[0],fawfa[1]}")  #แสดงค่าพ่อแม่ในterminal
         print(f"bwaba: {bwaba[0]}, {bwaba[1]}") #แสดงค่าลูกในterminal
         print(f"fmutant: {fmutant[0]}, {fmutant[1]}")
+
+        # แสดงผลลัพธ์
         print(f"per_gen_age: {per_gen_age}")
         print(f"per_workout: {per_workout}")
         print(f"per_smoking: {per_smoking}")
@@ -182,10 +187,11 @@ class NextPage(tk.Tk):
             result_message += f"\nผล crossover ลูกคนที่ {i}:\n"
             result_message += f"เพศ: {crosschild[0]}\nอายุ: {crosschild[1]}\nเวลาออกกำลังกาย: {crosschild[2]} นาที\nการสูบบุหรี่: {crosschild[3]}\n"
 
-        for i, mutantchild in enumerate(fmutant, start=1):
+        for i, mutantchild in enumerate(awaaw, start=1):
             result_message += f"\nผล mutant ลูกคนที่ {i}:\n"
-            result_message += f"เพศ: {mutantchild[0]}\nอายุ: {mutantchild[1]}\nเวลาออกกำลังกาย: {mutantchild[2]} นาที\nการสูบบุหรี่: {mutantchild[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson[4]}%\n"
+            result_message += f"เพศ: {mutantchild[0]}\nอายุ: {mutantchild[1]}\nเวลาออกกำลังกาย: {mutantchild[2]} นาที\nการสูบบุหรี่: {mutantchild[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {mutantchild[4]}%\n"
 
+        
         self.result_text.delete(1.0, tk.END)  # ล้างเนื้อหาก่อนหน้า
         self.result_text.insert(tk.END, result_message)
 
@@ -324,6 +330,26 @@ def mutant(bwaba):
     fitness_B_new_swapped = list(bwaba[1])
     fitness_B_new_swapped[1], fitness_B_new_swapped[2] = fitness_B_new_swapped[2], fitness_B_new_swapped[1]
     return fitness_A_new_swapped,fitness_B_new_swapped 
+
+def calculate_fitness_after_crossover(fmutant):
+    
+    gender = fmutant[0]
+    age = int(fmutant[1])
+    workout = int(fmutant[2])
+    smoking = fmutant[3]
+
+    per_gen_age_new = percent_age_gender(gender, age)
+    per_workout_new = percent_workout(workout)
+    per_smoking_new = percent_smoking(smoking, per_gen_age_new, per_workout_new)
+    per_heart_disease_new = (per_gen_age_new + per_workout_new + per_smoking_new) 
+    return per_heart_disease_new
+
+def calculate_fitness_after_crossover2(fmutant):
+    per_heart_disease_new_A = calculate_fitness_after_crossover(fmutant[0])
+    per_heart_disease_new_B = calculate_fitness_after_crossover(fmutant[1])
+    fmutant[0].append(per_heart_disease_new_A)
+    fmutant[1].append(per_heart_disease_new_B)
+    return fmutant[0],fmutant[1]
 
 
 
