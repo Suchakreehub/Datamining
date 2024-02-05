@@ -122,6 +122,7 @@ class NextPage(tk.Tk):
      gene = int(self.entry_random.get())
      
 
+<<<<<<< Updated upstream
     # คำนวณเปอร์เซ็นต์
      per_gen_age = self.percent_age_gender(gender, age)
      per_workout = self.percent_workout(workout)
@@ -166,6 +167,54 @@ class NextPage(tk.Tk):
 
      self.result_text.delete(1.0, tk.END)  # ล้างเนื้อหาก่อนหน้า
      self.result_text.insert(tk.END, result_message)
+=======
+    
+        # คำนวณเปอร์เซ็นต์
+        per_gen_age = self.percent_age_gender(gender, age)
+        per_workout = self.percent_workout(workout)
+        per_smoking = self.percent_smoking(smoking)
+        per_heart_disease = self.percent_heart_disease(per_gen_age, per_workout, per_smoking)   
+        chromosomes_1 = (gender, age, workout, smoking, per_heart_disease)
+        
+
+        random_data_gene = random_population(gene)
+        random_data_gene.insert(0, chromosomes_1)
+        fawfa = display_min_fitness_chromosomes(random_data_gene)
+        bwaba = single_point_crossover(fawfa)
+        print(f"x: {fawfa[0],fawfa[1]}")
+        print(f"bwaba: {bwaba[0]}, {bwaba[1]}")
+        print(f"per_gen_age: {per_gen_age}")
+        print(f"per_workout: {per_workout}")
+        print(f"per_smoking: {per_smoking}")
+        print(f"per_heart_disease: {per_heart_disease}")
+        print("\n")
+ 
+        # แสดงผลลัพธ์ใน ScrolledText widget
+        result_message = (
+            f"เพศ: {gender}\n"
+            f"อายุ: {age}\n"
+            f"เวลาออกกำลังกาย: {workout} นาที\n"
+            f"การสูบบุหรี่: {smoking}\n"
+            f"เปอร์เซ็นต์การเป็นโรคหัวใจ: {per_heart_disease}%\n"
+            f"จำนวนที่สุ่มมา: \n"
+            f""
+            
+        )
+        for i, person in enumerate(random_data_gene, start=1):
+            result_message += f"\nข้อมูลบุคคลที่ {i}:\n"
+            result_message += f"เพศ: {person[0]}\nอายุ: {person[1]}\nเวลาออกกำลังกาย: {person[2]} นาที\nการสูบบุหรี่: {person[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {person[4]}%\n"
+        
+        for i, bestperson in enumerate(fawfa, start=1):
+            result_message += f"\nพ่อ {i}:\n"
+            result_message += f"เพศ: {bestperson [0]}\nอายุ: {bestperson [1]}\nเวลาออกกำลังกาย: {bestperson [2]} นาที\nการสูบบุหรี่: {bestperson [3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson [4]}%\n"    
+        
+        for i, crosschild in enumerate(bwaba, start=1):
+            result_message = f"\nผล crossover ลูกคนที่{i}:\n"
+            result_message += f"เพศ: {crosschild [0]}\nอายุ: {crosschild [1]}\nเวลาออกกำลังกาย: {crosschild [2]} นาที\nการสูบบุหรี่: {crosschild [3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {crosschild [4]}%\n"
+
+        self.result_text.delete(1.0, tk.END)  # ล้างเนื้อหาก่อนหน้า
+        self.result_text.insert(tk.END, result_message)
+>>>>>>> Stashed changes
 
     def percent_age_gender(self, gender, age):
      if gender == "Male":
@@ -256,10 +305,50 @@ def percent_workout(workout):
         return 0.05
 
 def percent_smoking(smoking, per_gen_age, per_workout):
+<<<<<<< Updated upstream
     if smoking.lower() == "yes":
         return int(((per_gen_age + per_workout + 0.05) * 100) * 2)
     elif smoking.lower() == "no":
         return int((per_gen_age + per_workout + 0.05) * 100)
+=======
+        if smoking.lower() == "yes":
+            return int(((per_gen_age + per_workout + 0.05) * 100) * 2)
+        elif smoking.lower() == "no":
+            return int((per_gen_age + per_workout + 0.05) * 100)
+def display_min_fitness_chromosomes(random_data_gene):
+    x = []
+    y = []
+    # เก็บค่า Fitness ของทุก Chromosomes
+    fitness_values = [chromosome[4] for chromosome in random_data_gene]
+    # เรียงลำดับค่า Fitness จากน้อยไปมาก
+    sorted_fitness = sorted(fitness_values)
+    # เลือกค่า Fitness ต่ำสุด 2 ค่า
+    min_fitness_values = sorted_fitness[:2]        
+    for chromosome in random_data_gene:
+        if chromosome[4] in min_fitness_values:
+            if not x:
+                x = chromosome
+            elif not y:
+                y = chromosome
+            else:
+                break    
+    return x, y
+
+def single_point_crossover(fawfa):
+    #crossover
+    preA = fawfa[0]
+    preB = fawfa[1]
+    A = preA[:4]
+    B = preB[:4]
+    X = 2
+    A_new = np.append(A[:X], B[X:])
+    B_new = np.append(B[:X], A[X:])    
+    return A_new, B_new
+
+
+    
+
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     app = MainPage()
