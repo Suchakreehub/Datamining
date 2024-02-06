@@ -27,8 +27,8 @@ class MainPage(tk.Tk):
         self.logo_label.pack(pady=20)
 
         # โหลดและปรับขนาดรูปภาพของปุ่ม
-        button_image_path = "C:/Users/lnwza/Downloads/Datamining/Group_4.png"
-        button_image_size = (150, 40)
+        button_image_path = "C:/Users/lnwza/Downloads/Datamining/Start.png"
+        button_image_size = (100, 40)
         self.button_image = self.load_and_resize_image(
             button_image_path, button_image_size
         )
@@ -43,7 +43,7 @@ class MainPage(tk.Tk):
             image=self.button_image,
         )
         self.start_button.place(
-            x=370, y=465, width=100, height=40
+            x=300, y=465, width=100, height=40
         )  # ปรับขนาดตามความต้องการ
 
     def load_and_resize_image(self, path, size):
@@ -69,7 +69,7 @@ class NextPage(tk.Tk):
         self.title("หน้าถัดไป")
         self.geometry("840x720")
 
-        label = tk.Label(self, text="กรอกข้อมูลส่วนตัว")
+        label = tk.Label(self, text="นี่คือหน้าถัดไป")
         label.pack(pady=10)
 
         # ช่องกรอกสำหรับเพศ
@@ -143,61 +143,68 @@ class NextPage(tk.Tk):
 
         user_data_insert = insertuserdata(gene,chromosomes_1)
         population = user_data_insert
-        
-        sort  = sorted_data_gene(population)
-        sorted_population = sort_population_by_heart_disease(population,sort)
-        sort_forparent = display_min_fitness_chromosomes(population,sort) #เอาตัวchromosomeที่น้อยยสุดใส่ตัวแปร
-        sing_crossover = single_point_crossover(sort_forparent) #เอาตัวลูกที่สับมาแล้วมาใส่ตัวแปร
-        fmutant = mutant(sing_crossover)
-        fcalmutant = calculate_fitness_after_crossover2(fmutant)
-        replace = replaceold(fcalmutant, sorted_population)
-        
 
-        print(f"sort{sorted_population}\n")
+                  
+        iterations = 0 
+        MAX_ITERATIONS = 20  
+        replace = []
+        while iterations < MAX_ITERATIONS:
+            sort  = sorted_data_gene(population)
+            sorted_population = sort_population_by_heart_disease(population,sort)
+            sort_forparent = display_min_fitness_chromosomes(population,sort) #เอาตัวchromosomeที่น้อยยสุดใส่ตัวแปร
+            sing_crossover = single_point_crossover(sort_forparent) #เอาตัวลูกที่สับมาแล้วมาใส่ตัวแปร
+            fmutant = mutant(sing_crossover)
+            fcalmutant = calculate_fitness_after_crossover2(fmutant)
+            replace = replaceold(fcalmutant, sorted_population)
+            
+            
+            print(f"sort{sorted_population}\n")
 
-        print(f"replace{replace}\n")  # แสดงผลลำดับหลังจากการ mutant และ crossover
-        # แสดงผลลัพธ์
-        print(f"per_gen_age: {per_gen_age}")
-        print(f"per_workout: {per_workout}")
-        print(f"per_smoking: {per_smoking}")
-        print(f"per_heart_disease: {per_heart_disease}")
-        print("\n")
+            print(f"replace{replace}\n")  # แสดงผลลำดับหลังจากการ mutant และ crossover
+            # แสดงผลลัพธ์
+            print(f"per_gen_age: {per_gen_age}")
+            print(f"per_workout: {per_workout}")
+            print(f"per_smoking: {per_smoking}")
+            print(f"per_heart_disease: {per_heart_disease}")
+            print("\n")
  
         # แสดงผลลัพธ์ใน ScrolledText widget
-        result_message = (
-            f"เพศ: {gender}\n"
-            f"อายุ: {age}\n"
-            f"เวลาออกกำลังกาย: {workout} นาที\n"
-            f"การสูบบุหรี่: {smoking}\n"
-            f"เปอร์เซ็นต์การเป็นโรคหัวใจ: {per_heart_disease}%\n"
-            f"จำนวนที่สุ่มมา: \n"
-            f""
+            result_message = (
+                f"เพศ: {gender}\n"
+                f"อายุ: {age}\n"
+                f"เวลาออกกำลังกาย: {workout} นาที\n"
+                f"การสูบบุหรี่: {smoking}\n"
+                f"เปอร์เซ็นต์การเป็นโรคหัวใจ: {per_heart_disease}%\n"
+                f"จำนวนที่สุ่มมา: \n"
+                f""
             
         )
         # แสดงผลข้อมูลประชากรทั้งหมด
     #for i,generation in enumerate(, start=1):     
-        for i, person in enumerate(population, start=1):
-            result_message += f"\nข้อมูลบุคคลที่ {i}:\n"
-            result_message += f"เพศ: {person[0]} อายุ: {person[1]} เวลาออกกำลังกาย: {person[2]} นาที\nการสูบบุหรี่: {person[3]} เปอร์เซ็นต์การเป็นโรคหัวใจ: {person[4]}%\n"
+            for i, person in enumerate(population, start=1):
+                result_message += f"\nข้อมูลบุคคลที่ {i}:\n"
+                result_message += f"เพศ: {person[0]}\nอายุ: {person[1]}\nเวลาออกกำลังกาย: {person[2]} นาที\nการสูบบุหรี่: {person[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {person[4]}%\n"
 
         # แสดงผลว่า parent ที่ถูกเลือกคือตัวไหน
-        for i, bestperson in enumerate(sort_forparent, start=1):
-            result_message += f"\nparent {i}:\n"
-            result_message += f"เพศ: {bestperson[0]} อายุ: {bestperson[1]} เวลาออกกำลังกาย: {bestperson[2]} นาที\nการสูบบุหรี่: {bestperson[3]}เปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson[4]}%\n"
-        result_message += f"------------------------------"
+            for i, bestperson in enumerate(sort_forparent, start=1):
+                result_message += f"\nparent {i}:\n"
+                result_message += f"เพศ: {bestperson[0]}\nอายุ: {bestperson[1]}\nเวลาออกกำลังกาย: {bestperson[2]} นาที\nการสูบบุหรี่: {bestperson[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {bestperson[4]}%\n"
+
         # แสดงผลลูกที่ผ่านการ crossover
-        for i, crosschild in enumerate(sing_crossover, start=1):
-            result_message += f"\nผล crossover ลูกคนที่ {i}:\n"
-            result_message += f"เพศ: {crosschild[0]} อายุ: {crosschild[1]} เวลาออกกำลังกาย: {crosschild[2]} นาที\nการสูบบุหรี่: {crosschild[3]}\n"
-        result_message += f"------------------------------"
-        for i, mutantchild in enumerate(fcalmutant, start=1):
-            result_message += f"\nผล mutant ลูกคนที่ {i}:\n"
-            result_message += f"เพศ: {mutantchild[0]} อายุ: {mutantchild[1]}เวลาออกกำลังกาย: {mutantchild[2]} นาที\nการสูบบุหรี่: {mutantchild[3]} เปอร์เซ็นต์การเป็นโรคหัวใจ: {mutantchild[4]}%\n"
-        result_message += f"------------------------------"
-        for i, newpopula in enumerate(replace, start=1):
-            result_message += f"\nข้อมูลจากรุ่นที่2 ประชากรคนที่ {i}:\n"
-            result_message += f"เพศ: {newpopula[0]} อายุ: {newpopula[1]} เวลาออกกำลังกาย: {newpopula[2]} นาที\nการสูบบุหรี่: {newpopula[3]} เปอร์เซ็นต์การเป็นโรคหัวใจ: {newpopula[4]}%\n"
-        
+            for i, crosschild in enumerate(sing_crossover, start=1):
+                result_message += f"\nผล crossover ลูกคนที่ {i}:\n"
+                result_message += f"เพศ: {crosschild[0]}\nอายุ: {crosschild[1]}\nเวลาออกกำลังกาย: {crosschild[2]} นาที\nการสูบบุหรี่: {crosschild[3]}\n"
+
+            for i, mutantchild in enumerate(fcalmutant, start=1):
+                result_message += f"\nผล mutant ลูกคนที่ {i}:\n"
+                result_message += f"เพศ: {mutantchild[0]}\nอายุ: {mutantchild[1]}\nเวลาออกกำลังกาย: {mutantchild[2]} นาที\nการสูบบุหรี่: {mutantchild[3]}\nเปอร์เซ็นต์การเป็นโรคหัวใจ: {mutantchild[4]}%\n"
+                
+                if len(replace) >= 5 and replace[4][4] == 20:
+                    break
+                if iterations == MAX_ITERATIONS:
+                    print("ไม่สามารถหาค่าตรงเงื่อนไขได้")
+                    break
+
         self.result_text.delete(1.0, tk.END)  # ล้างเนื้อหาก่อนหน้า
         self.result_text.insert(tk.END, result_message)
 
